@@ -35,4 +35,27 @@ describe('VideoCard', () => {
     expect(screen.getByText(channelTitle)).toBeInTheDocument();
     expect(screen.getByText(formatAgo(publishedAt))).toBeInTheDocument();
   });
+
+  it('navigates to detailed video page with video state when clicked', () => {
+    function LocationStateDisplay() {
+      return <pre>{JSON.stringify(useLocation().state)}</pre>;
+    }
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<VideoCard video={video} />} />
+          <Route
+            path={`/videos/watch/${video.id}`}
+            element={<LocationStateDisplay />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const card = screen.getByRole('listitem');
+    userEvent.click(card);
+
+    expect(screen.getByText(JSON.stringify({ video }))).toBeInTheDocument();
+  });
 });
