@@ -5,6 +5,7 @@ import { formatAgo } from '../../util/date';
 import VideoCard from '../VideoCard';
 import { fakeVideo as video } from '../../tests/video';
 import { withRouter } from '../../tests/utils';
+import renderer from 'react-test-renderer';
 
 describe('VideoCard', () => {
   const { title, channelTitle, publishedAt, thumbnails } = video.snippet;
@@ -44,5 +45,22 @@ describe('VideoCard', () => {
     userEvent.click(card);
 
     expect(screen.getByText(JSON.stringify({ video }))).toBeInTheDocument();
+  });
+
+  // snapshot test
+  it('renders grid type correctly', () => {
+    const component = renderer.create(
+      withRouter(<Route path='/' element={<VideoCard video={video} />} />)
+    );
+    expect(component.toJSON()).toMatchSnapshot();
+  });
+
+  it('renders list type correctly', () => {
+    const component = renderer.create(
+      withRouter(
+        <Route path='/' element={<VideoCard video={video} type='list' />} />
+      )
+    );
+    expect(component.toJSON()).toMatchSnapshot();
   });
 });
